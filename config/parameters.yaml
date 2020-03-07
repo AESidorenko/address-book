@@ -1,0 +1,3 @@
+parameters:
+    database_host:     localhost
+    database_name:     address_book

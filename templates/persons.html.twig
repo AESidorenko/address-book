@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    <div class="row">
+        {{ knp_pagination_filter(pagination, {
+            'p.firstName': 'First name',
+            'p.lastName': 'Last name',
+        }) }}
+    </div>
+    <div class="row">
+        <div class="col">
+            <table class="table">
+                <tr>
+                    <th scope="col">{{ knp_pagination_sortable(pagination, 'Id', 'p.id') }}</th>
+                    <th scope="col">{{ knp_pagination_sortable(pagination, 'First name', 'p.firstName') }}</th>
+                    <th scope="col">{{ knp_pagination_sortable(pagination, 'Last name', 'p.lastName') }}</th>
+                    <th scope="col">Actions</th>
+                </tr>
+                {% for person in pagination %}
+                    <tr {% if loop.index is odd %}class="color"{% endif %}>
+                        <td>{{ person.id }}</td>
+                        <td><a href="{{ path('person.show', {'id': person.id}) }}">{{ person.firstName }}</a></td>
+                        <td><a href="{{ path('person.show', {'id': person.id}) }}">{{ person.lastName }}</a></td>
+                        <td>
+                            <a href="#" data-href="{{ path('person.edit', {'id': person.id}) }}" data-toggle="modal"
+                               data-target="#modal-dialog">edit</a>
+                            &nbsp;|&nbsp;<a
+                                    href="{{ path('person.delete', {'id': person.id}) }}" data-toggle="modal"
+                                    data-target="#modal-dialog">delete</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+            <div class="navigation">
+                {{ knp_pagination_render(pagination, null, {}, {
+                    'position': 'left',
+                    'size': 'normal',
+                    'rounded': true,
+                }) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

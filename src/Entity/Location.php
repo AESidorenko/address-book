@@ -18,7 +18,8 @@ class Location
     private $id;
 
     /**
-     * @ORM\OneToOne(targetEntity="App\Entity\Country")
+     * @var Country|null
+     * @ORM\ManyToOne(targetEntity="App\Entity\Country", cascade={"persist"})
      * @ORM\JoinColumn(name="country_id", referencedColumnName="id")
      */
     private $country;
@@ -53,7 +54,7 @@ class Location
     }
 
     /**
-     * @return mixed
+     * @return Country|null
      */
     public function getCountry()
     {
@@ -107,5 +108,12 @@ class Location
         $this->extra = $extra;
 
         return $this;
+    }
+
+    public function __toString()
+    {
+        $country = is_null($this->country) ? 'NULL' : $this->country->getTitle();
+
+        return "Country: $country, City: $this->city, Extra: $this->extra";
     }
 }

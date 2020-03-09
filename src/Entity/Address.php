@@ -18,7 +18,7 @@ class Address
     private $id;
 
     /**
-     * @ORM\OneToOne(targetEntity="App\Entity\Location")
+     * @ORM\OneToOne(targetEntity="App\Entity\Location", cascade={"persist", "remove"})
      * @ORM\JoinColumn(name="location_id", referencedColumnName="id")
      */
     private $location;
@@ -58,7 +58,7 @@ class Address
     }
 
     /**
-     * @return mixed
+     * @return Location|null
      */
     public function getLocation()
     {

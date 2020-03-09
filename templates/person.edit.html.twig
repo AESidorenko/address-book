@@ -1,5 +1,6 @@
 {% extends 'base.html.twig' %}
 
+{# todo: move custom templates to extrenal files #}
 {% form_theme form _self %}
 
 {% block contact_widget %}
@@ -19,6 +20,7 @@
     </div>
 {% endblock %}
 
+{# todo: remove this block #}
 {#{% block location_widget %}#}
 {#    <div class="form-row">#}
 {#        <div class="col-md-4">#}
@@ -78,8 +80,9 @@
                 </div>
             </div>
 
+{#            {{ form_row(form.birthday) }}#}
             <div class="form-row mb-3">
-                <div class="col">
+                <div class="col-12">
                     {{ form_label(form.birthday) }}
                     {{ form_widget(form.birthday) }}
                 </div>

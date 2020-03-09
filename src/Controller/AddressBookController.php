@@ -2,9 +2,13 @@
 
 namespace App\Controller;
 
+use App\Entity\Address;
+use App\Entity\Country;
 use App\Entity\Person;
 use App\Forms\PersonType;
+use App\Repository\CountryRepository;
 use App\Repository\PersonRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -60,20 +64,48 @@ class AddressBookController extends Controller
     /**
      * @Route("/persons/{id}/edit", name="person.edit")
      * @ParamConverter("person", class="App\Entity\Person")
-     * @param Person $person
+     * @param Request                $request
+     * @param Person                 $person
+     * @param EntityManagerInterface $entityManager
+     * @param CountryRepository      $countryRepository
      * @return Response
      */
-    public function editOne(Request $request, Person $person)
+    public function editOne(
+        Request $request,
+        Person $person,
+        EntityManagerInterface $entityManager,
+        CountryRepository $countryRepository
+    )
     {
+        $originalCountries = [];
+        foreach ($person->getAddresses() as $address) {
+            $originalCountries[$address->getId()] = $address->getLocation()->getCountry()->getTitle();
+        }
+
         $form = $this->createForm(PersonType::class, $person);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            /** @var Person $person */
             $person = $form->getData();
 
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($person);
+            foreach ($person->getAddresses() as $address) {
+                $country  = $address->getLocation()->getCountry();
+                if (array_key_exists($address->getId(), $originalCountries) &&
+                    $originalCountries[$address->getId()] !== $country->getTitle()) {
+                    $newCountry = $countryRepository->findOneByCountryTitle($country->getTitle());
+                    if ($newCountry === null) {
+                        $newCountry = (new Country())->setTitle($country->getTitle());
+                    }
+
+                    $address->getLocation()->setCountry($newCountry);
+
+                    $entityManager->detach($country);
+                    $entityManager->persist($newCountry);
+                }
+            }
+
             $entityManager->flush();
         }
 

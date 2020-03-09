@@ -114,7 +114,7 @@ class Person
      * @param string $lastName
      * @return Person
      */
-    public function setLastName(string $lastName): Person
+    public function setLastName($lastName): Person
     {
         $this->lastName = $lastName;
 
@@ -160,7 +160,7 @@ class Person
     }
 
     /**
-     * @return Collection
+     * @return Address[]
      */
     public function getAddresses(): Collection
     {

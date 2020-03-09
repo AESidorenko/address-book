@@ -18,7 +18,6 @@ class PersonType extends AbstractType
             ->add('firstName')
             ->add('lastName')
             ->add('birthday')
-            ->add('submit', SubmitType::class)
             ->add('contacts', CollectionType::class,
                   [
                       'entry_type'    => ContactType::class,

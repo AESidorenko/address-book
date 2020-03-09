@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="card">
+        <div class="card-body">
+            <h2>Contact</h2>
+            {{ include('blocks/person.info.html.twig') }}
+            {{ include('blocks/person.addresses.html.twig') }}
+            {{ include('blocks/person.contacts.html.twig') }}
+        </div>
+    </div>
+{% endblock %}

@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -12,6 +13,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Person
 {
+    // todo: add keys, constraints and complex keys
+
     /**
      * @ORM\Column(type="integer")
      * @ORM\Id
@@ -60,6 +63,8 @@ class Person
     public function __construct()
     {
         $this->firstName = '';
+        $this->lastName  = '';
+        $this->birthday  = new DateTime();
         $this->contacts  = new ArrayCollection();
         $this->addresses = new ArrayCollection();
     }

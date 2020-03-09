@@ -1,0 +1,25 @@
+<div class="card mb-2">
+    <div class="card-header">Addresses</div>
+    <div class="card-body">
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Street, number</th>
+                <th scope="col">Zip code</th>
+                <th scope="col">City, state/province etc.</th>
+                <th scope="col">Country</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for address in person.addresses %}
+                <tr>
+                    <td>{{ [address.addressStreet, address.addressNumber] | join(', ') }}</td>
+                    <td>{{ address.zipCode }}</td>
+                    <td>{{ [address.location.city, address.location.extra] | join(', ') }}</td>
+                    <td>{{ address.location.country.title }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>

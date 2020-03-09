@@ -20,24 +20,6 @@
     </div>
 {% endblock %}
 
-{# todo: remove this block #}
-{#{% block location_widget %}#}
-{#    <div class="form-row">#}
-{#        <div class="col-md-4">#}
-{#            {{ form_label(form.countryTitle) }}#}
-{#            {{ form_widget(form.countryTitle) }}#}
-{#        </div>#}
-{#        <div class="col-md-4">#}
-{#            {{ form_label(form.city) }}#}
-{#            {{ form_widget(form.city) }}#}
-{#        </div>#}
-{#        <div class="col-md-4">#}
-{#            {{ form_label(form.extra) }}#}
-{#            {{ form_widget(form.extra) }}#}
-{#        </div>#}
-{#    </div>#}
-{#{% endblock %}#}
-
 {% block address_widget %}
     <div class="row">
         <div class="col-10">
@@ -66,102 +48,36 @@
 
 {% block body %}
     {{ form_start(form) }}
-    <div class="card mb-2">
-        <div class="card-header">Personal info</div>
-        <div class="card-body">
-            <div class="form-row">
-                <div class="col">
-                    {{ form_label(form.firstName) }}
-                    {{ form_widget(form.firstName) }}
-                </div>
-                <div class="col">
-                    {{ form_label(form.lastName) }}
-                    {{ form_widget(form.lastName) }}
-                </div>
-            </div>
-
-{#            {{ form_row(form.birthday) }}#}
-            <div class="form-row mb-3">
-                <div class="col-12">
-                    {{ form_label(form.birthday) }}
-                    {{ form_widget(form.birthday) }}
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="card mb-2">
-        <div class="card-header">Contacts</div>
-        <div class="card-body">
-            <div class="contacts" data-prototype="{{ form_widget(form.contacts.vars.prototype)|e('html_attr') }}">
-                {% for contact in form.contacts %}
-                    <div id="contact-{{ loop.index - 1 }}"
-                         class="contact-entry">{{ form_row(contact, {'attr': {'class': 'mt-5'}}) }}</div>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-    {% do form.contacts.setRendered %}
 
     <div class="card">
-        <div class="card-header">Addresses</div>
         <div class="card-body">
-            <div class="addresses" data-prototype="{{ form_widget(form.addresses.vars.prototype)|e('html_attr') }}">
-                {% for address in form.addresses %}
-                    <div id="address-{{ loop.index - 1 }}"
-                         class="address-entry">{{ form_row(address, {'attr': {'class': 'mt-5'}}) }}</div>
-                {% endfor %}
-            </div>
+            <h2>Contact</h2>
+            {{ include('forms/person.info.html.twig') }}
+            {{ include('forms/person.addresses.html.twig') }}
+            {{ include('forms/person.contacts.html.twig') }}
         </div>
     </div>
+    <br>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+    <button id="btn-cancel" type="button" class="btn btn-secondary">Cancel</button>
+
+    {% do form.contacts.setRendered %}
     {% do form.addresses.setRendered %}
 
-    <br>
     {{ form_end(form) }}
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
 
+    <script src="{{ asset('js/form.entries-collection.js') }}"></script>
+
     <script>
-        var $contactsCollectionHolder;
-        var $addContactButton = $('<button type="button" class="btn btn-success add_contact_link">Add new contact</button>');
-        var $newContactLinkDiv = $('<div/>').append($addContactButton);
-
-        var $addressesCollectionHolder;
-        var $addAddressButton = $('<button type="button" class="btn btn-success add_address_link">Add new address</button>');
-        var $newAddressLinkDiv = $('<div/>').append($addAddressButton);
-
         $(document).ready(function () {
-            $contactsCollectionHolder = $('div.contacts');
-            $contactsCollectionHolder.append($newContactLinkDiv);
-            $contactsCollectionHolder.data('index', $contactsCollectionHolder.find('.contact-entry').length);
-
-            $addressesCollectionHolder = $('div.addresses');
-            $addressesCollectionHolder.append($newAddressLinkDiv);
-            $addressesCollectionHolder.data('index', $addressesCollectionHolder.find('.address-entry').length);
-
-            $addContactButton.on('click', function (e) {
-                addContactForm($contactsCollectionHolder, $newContactLinkDiv, 'contact');
-            });
-
-            $addAddressButton.on('click', function (e) {
-                addContactForm($addressesCollectionHolder, $newAddressLinkDiv, 'address');
-            });
-        });
-
-        function addContactForm($collectionHolder, $newLinkDiv, $entityName) {
-            var prototype = $collectionHolder.data('prototype');
-            var index = $collectionHolder.data('index');
-            var newForm = prototype;
-
-            newForm = newForm.replace(/__name__/g, index);
-            $collectionHolder.data('index', index + 1);
-
-            var $newFormFieldset = $('<fieldset class="form-group"/>').append(newForm);
-            var $newFormDiv = $(`<div id="${$entityName}-${index}" class="contact-entry">`).append($newFormFieldset);
-
-            $newLinkDiv.before($newFormDiv);
-        }
+            $("#btn-cancel").click(function () {
+                window.open("{{ path('persons.list') }}", "_self");
+            })
+        })
     </script>
 {% endblock %}

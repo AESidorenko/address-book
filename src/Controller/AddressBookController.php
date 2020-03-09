@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\Address;
 use App\Entity\Country;
 use App\Entity\Person;
 use App\Forms\PersonType;
@@ -10,7 +9,6 @@ use App\Repository\CountryRepository;
 use App\Repository\PersonRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,7 +18,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class AddressBookController extends Controller
 {
     /**
-     * @Route("/persons")
+     * @Route("/persons", name="persons.list")
      * @param Request          $request
      * @param PersonRepository $personRepository
      * @return Response
@@ -91,7 +89,7 @@ class AddressBookController extends Controller
             $person = $form->getData();
 
             foreach ($person->getAddresses() as $address) {
-                $country  = $address->getLocation()->getCountry();
+                $country = $address->getLocation()->getCountry();
                 if (array_key_exists($address->getId(), $originalCountries) &&
                     $originalCountries[$address->getId()] !== $country->getTitle()) {
                     $newCountry = $countryRepository->findOneByCountryTitle($country->getTitle());

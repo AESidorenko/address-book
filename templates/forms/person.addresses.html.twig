@@ -1,0 +1,11 @@
+<div class="card">
+    <div class="card-header">Addresses</div>
+    <div class="card-body">
+        <div class="addresses" data-prototype="{{ form_widget(form.addresses.vars.prototype)|e('html_attr') }}">
+            {% for address in form.addresses %}
+                <div id="address-{{ loop.index - 1 }}"
+                     class="address-entry">{{ form_row(address, {'attr': {'class': 'mt-5'}}) }}</div>
+            {% endfor %}
+        </div>
+    </div>
+</div>

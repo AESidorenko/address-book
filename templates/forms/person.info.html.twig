@@ -1,0 +1,22 @@
+<div class="card mb-2">
+    <div class="card-header">Personal info</div>
+    <div class="card-body">
+        <div class="form-row">
+            <div class="col">
+                {{ form_label(form.firstName) }}
+                {{ form_widget(form.firstName) }}
+            </div>
+            <div class="col">
+                {{ form_label(form.lastName) }}
+                {{ form_widget(form.lastName) }}
+            </div>
+        </div>
+
+        <div class="form-row mb-3">
+            <div class="col-12">
+                {{ form_label(form.birthday) }}
+                {{ form_widget(form.birthday) }}
+            </div>
+        </div>
+    </div>
+</div>

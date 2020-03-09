@@ -15,7 +15,9 @@ class ContactType extends AbstractType
         $formBuilder
             ->add('headline')
             ->add('phone')
-            ->add('email', EmailType::class);
+            ->add('email', EmailType::class, [
+                'required' => false
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver)

@@ -15,8 +15,8 @@
                 <tr>
                     <td>{{ [address.addressStreet, address.addressNumber] | join(', ') }}</td>
                     <td>{{ address.zipCode }}</td>
-                    <td>{{ [address.location.city, address.location.extra] | join(', ') }}</td>
-                    <td>{{ address.location.country.title }}</td>
+                    <td>{{ address.location is null ? '' : [address.location.city, address.location.extra] | join(', ') }}</td>
+                    <td>{{ address.location is null ? '' : address.location.country.title }}</td>
                 </tr>
             {% endfor %}
             </tbody>

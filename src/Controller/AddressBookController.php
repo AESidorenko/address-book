@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Country;
 use App\Entity\Person;
+use App\Forms\PersonSearchFiltersType;
 use App\Forms\PersonType;
 use App\Repository\CountryRepository;
 use App\Repository\PersonRepository;
@@ -14,9 +15,20 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\RouterInterface;
 
 class AddressBookController extends Controller
 {
+    /**
+     * @var RouterInterface
+     */
+    private $router;
+
+    public function __construct(RouterInterface $router)
+    {
+        $this->router = $router;
+    }
+
     /**
      * @Route("/persons", name="persons.list")
      * @param Request          $request
@@ -25,7 +37,18 @@ class AddressBookController extends Controller
      */
     public function listPersons(Request $request, PersonRepository $personRepository, PaginatorInterface $paginator)
     {
-        $query = $personRepository->getFindAllQuery();
+        $searchFiltersForm = $this->createForm(PersonSearchFiltersType::class);
+        $searchFiltersForm->handleRequest($request);
+        if ($searchFiltersForm->isSubmitted() && $searchFiltersForm->isValid()) {
+            $formData = $searchFiltersForm->getData();
+            $query    = $personRepository->getFindAllByNameCityAndCountry(
+                $formData['name'],
+                $formData['city'],
+                $formData['country']
+            );
+        } else {
+            $query = $personRepository->getFindAllQuery();
+        }
 
         $pagination = $paginator->paginate(
             $query,
@@ -38,7 +61,11 @@ class AddressBookController extends Controller
         return $this->render(
             'persons.html.twig',
             [
-                'pagination' => $pagination
+                'searchFilters' => $searchFiltersForm->createView(),
+                'pagination'    => $pagination,
+                'breadcrumbs'   => [
+                    'Persons' => ''
+                ]
             ]
         );
     }
@@ -49,12 +76,16 @@ class AddressBookController extends Controller
      * @param Person $person
      * @return Response
      */
-    public function showOne(Person $person)
+    public function showOne(Person $person, RouterInterface $router)
     {
         return $this->render(
             'person.show.html.twig',
             [
-                'person' => $person
+                'person'      => $person,
+                'breadcrumbs' => [
+                    'Persons' => $this->router->generate('persons.list'),
+                    'Details' => '',
+                ]
             ]
         );
     }
@@ -77,6 +108,10 @@ class AddressBookController extends Controller
     {
         $originalCountries = [];
         foreach ($person->getAddresses() as $address) {
+            if ($address->getLocation() === null) {
+                continue;
+            }
+
             $originalCountries[$address->getId()] = $address->getLocation()->getCountry()->getTitle();
         }
 
@@ -110,8 +145,12 @@ class AddressBookController extends Controller
         return $this->render(
             'person.edit.html.twig',
             [
-                'form'   => $form->createView(),
-                'person' => $person
+                'form'        => $form->createView(),
+                'person'      => $person,
+                'breadcrumbs' => [
+                    'Persons'      => $this->router->generate('persons.list'),
+                    'Edit details' => '',
+                ]
             ]
         );
     }
@@ -140,8 +179,12 @@ class AddressBookController extends Controller
         return $this->render(
             'person.edit.html.twig',
             [
-                'form'   => $form->createView(),
-                'person' => $person
+                'form'        => $form->createView(),
+                'person'      => $person,
+                'breadcrumbs' => [
+                    'Persons' => $this->router->generate('persons.list'),
+                    'Add new' => '',
+                ]
             ]
         );
     }
@@ -158,7 +201,7 @@ class AddressBookController extends Controller
         return $this->render(
             'person.show.html.twig',
             [
-                'person' => $person
+                'person' => $person,
             ]
         );
     }

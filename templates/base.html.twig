@@ -11,8 +11,24 @@
     <title>{% block title %}Welcome!{% endblock %}</title>
 </head>
 <body>
-<div class="container">
-    {#    todo: breadcrumbs #}
+<div class="container-fluid mt-3">
+
+    {% if breadcrumbs is defined %}
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                {% for slug, url in breadcrumbs %}
+                    <li class="breadcrumb-item {{ loop.last ? ' active' : '' }}" aria-current="page">
+                        {% if not loop.last %}
+                            <a href="{{ url }}">{{ slug }}</a>
+                        {% else %}
+                            {{ slug }}
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ol>
+        </nav>
+    {% endif %}
+
     {% block body %}{% endblock %}
 </div>
 

@@ -3,7 +3,13 @@
 {% block body %}
     <div class="card">
         <div class="card-body">
-            <h2>Contact</h2>
+            <div class="row">
+                <div class="col-12">
+                    <h2 class="float-left">Contact</h2>
+                    <a href="{{ path('person.edit', {'id': person.id}) }}" class="btn btn-success btn-sm float-right">Edit contact</a>
+                </div>
+            </div>
+
             {{ include('blocks/person.info.html.twig') }}
             {{ include('blocks/person.addresses.html.twig') }}
             {{ include('blocks/person.contacts.html.twig') }}

@@ -1,27 +1,57 @@
 {% extends 'base.html.twig' %}
 {% block body %}
     <div class="row m-2">
-        <div class="col-md-12">
-            <a href="{{ path('person.new') }}" type="button" class="btn btn-primary">Add new person</a>
+        <div class="col-md-9">
+            <a class="btn btn-sm btn-secondary" data-toggle="collapse" href="#collapseExample" role="button"
+               aria-expanded="false" aria-controls="collapseExample">
+                Search filters
+            </a>
+            <div class="collapse" id="collapseExample">
+                {{ form_start(searchFilters) }}
+                <div class="card card-body">
+                    <div class="form-row">
+                        <div class="col-md-4">Name: {{ form_widget(searchFilters.name) }}</div>
+                        <div class="col-md-4">City: {{ form_widget(searchFilters.city) }}</div>
+                        <div class="col-md-4">Country: {{ form_widget(searchFilters.country) }}</div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="col-md-12 mt-3">
+                            <button type="submit" class="btn btn-primary btn-sm">Apply filters</button>
+                        </div>
+                    </div>
+
+                </div>
+                {{ form_end(searchFilters) }}
+            </div>
+        </div>
+        <div class="col-md-3">
+            <a href="{{ path('person.new') }}" type="button" class="btn btn-sm btn-success float-right">+ Add new
+                person</a>
         </div>
     </div>
-    <div class="row m-2">
-        <div class="col-md-5">
-            {{ knp_pagination_filter(pagination, {
-                'p.firstName': 'First name',
-                'p.lastName': 'Last name',
-            }) }}
-        </div>
-    </div>
+
+    {#    todo: remove block#}
+    {#    <div class="row m-2">#}
+    {#        <div class="col-md-5">#}
+    {#            {{ knp_pagination_filter(pagination, {#}
+    {#                'p.firstName': 'First name',#}
+    {#                'p.lastName': 'Last name',#}
+    {#            }) }}#}
+    {#        </div>#}
+    {#    </div>#}
+
     <div class="row">
         <div class="col">
-            <table class="table">
+            <table class="table table-striped">
+                <thead>
                 <tr>
                     <th scope="col">{{ knp_pagination_sortable(pagination, 'Id', 'p.id') }}</th>
                     <th scope="col">{{ knp_pagination_sortable(pagination, 'First name', 'p.firstName') }}</th>
                     <th scope="col">{{ knp_pagination_sortable(pagination, 'Last name', 'p.lastName') }}</th>
                     <th scope="col">Actions</th>
                 </tr>
+                </thead>
                 {% for person in pagination %}
                     <tr {% if loop.index is odd %}class="color"{% endif %}>
                         <td>{{ person.id }}</td>

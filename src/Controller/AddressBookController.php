@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Person;
+use App\Forms\PersonType;
 use App\Repository\PersonRepository;
 use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
@@ -62,11 +63,54 @@ class AddressBookController extends Controller
      * @param Person $person
      * @return Response
      */
-    public function editOne(Person $person)
+    public function editOne(Request $request, Person $person)
     {
+        $form = $this->createForm(PersonType::class, $person);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $person = $form->getData();
+
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($person);
+            $entityManager->flush();
+        }
+
         return $this->render(
-            'person.show.html.twig',
+            'person.edit.html.twig',
             [
+                'form'   => $form->createView(),
+                'person' => $person
+            ]
+        );
+    }
+
+    /**
+     * @Route("/persons/new", name="person.new")
+     * @param Request $request
+     * @return Response
+     */
+    public function newOne(Request $request)
+    {
+        $person = new Person();
+
+        $form = $this->createForm(PersonType::class, $person);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $person = $form->getData();
+
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($person);
+            $entityManager->flush();
+        }
+
+        return $this->render(
+            'person.edit.html.twig',
+            [
+                'form'   => $form->createView(),
                 'person' => $person
             ]
         );
@@ -78,7 +122,8 @@ class AddressBookController extends Controller
      * @param Person $person
      * @return Response
      */
-    public function deleteOne(Person $person)
+    public
+    function deleteOne(Person $person)
     {
         return $this->render(
             'person.show.html.twig',

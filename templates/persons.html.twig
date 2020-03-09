@@ -1,10 +1,17 @@
 {% extends 'base.html.twig' %}
 {% block body %}
-    <div class="row">
-        {{ knp_pagination_filter(pagination, {
-            'p.firstName': 'First name',
-            'p.lastName': 'Last name',
-        }) }}
+    <div class="row m-2">
+        <div class="col-md-2">
+            <a href="{{ path('person.new') }}" type="button" class="btn btn-primary">Add new person</a>
+        </div>
+    </div>
+    <div class="row m-2">
+        <div class="col-md-5">
+            {{ knp_pagination_filter(pagination, {
+                'p.firstName': 'First name',
+                'p.lastName': 'Last name',
+            }) }}
+        </div>
     </div>
     <div class="row">
         <div class="col">
@@ -21,9 +28,7 @@
                         <td><a href="{{ path('person.show', {'id': person.id}) }}">{{ person.firstName }}</a></td>
                         <td><a href="{{ path('person.show', {'id': person.id}) }}">{{ person.lastName }}</a></td>
                         <td>
-                            <a href="#" data-href="{{ path('person.edit', {'id': person.id}) }}" data-toggle="modal"
-                               data-target="#modal-dialog">edit</a>
-                            &nbsp;|&nbsp;<a
+                            <a href="{{ path('person.edit', {'id': person.id}) }}">edit</a>&nbsp;|&nbsp;<a
                                     href="{{ path('person.delete', {'id': person.id}) }}" data-toggle="modal"
                                     data-target="#modal-dialog">delete</a>
                         </td>
@@ -40,4 +45,3 @@
         </div>
     </div>
 {% endblock %}
-

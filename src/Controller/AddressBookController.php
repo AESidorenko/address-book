@@ -190,11 +190,13 @@ class AddressBookController extends Controller
      * @param EntityManagerInterface $entityManager
      * @return Response
      */
-    public function newOne(Request $request, EntityManagerInterface $entityManager, $uploadsDirectory)
+    public function newOne(Request $request, EntityManagerInterface $entityManager)
     {
         $person = new Person();
 
         $form = $this->createForm(PersonType::class, $person);
+
+        $person->setImage('');
 
         $form->handleRequest($request);
 

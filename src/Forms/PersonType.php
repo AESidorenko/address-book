@@ -7,6 +7,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
@@ -16,8 +17,14 @@ class PersonType extends AbstractType
     public function buildForm(FormBuilderInterface $formBuilder, array $options)
     {
         $formBuilder
-            ->add('firstName')
-            ->add('lastName')
+            ->add('firstName', TextType::class, [
+                'required' => true,
+            ]
+            )
+            ->add('lastName', TextType::class, [
+                'required' => true,
+            ]
+            )
             ->add('birthday', DateType::class, [
                                 'widget' => 'choice',
                                 'years'  => range(date('Y') - 100, date('Y')),

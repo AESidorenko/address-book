@@ -26,7 +26,7 @@
 
             {{ form_row(form.image) }}
             {% if person.image is not empty %}
-            <img src="{{ asset('uploadsPath ~ '/' ~ person.image) }}" height="100" class="img rounded mb-3">
+                <img src="{{ asset(uploadsPath ~ '/' ~ person.image) }}" height="100" class="img rounded mb-3">
             {% else %}
                 No photo.
             {% endif %}

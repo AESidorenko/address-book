@@ -1,0 +1,22 @@
+{% block address_widget %}
+    <div class="row">
+        <div class="col-10">
+            {{ form_row(form.location) }}
+            <div class="form-row">
+                <div class="col-md-4">
+                    {{ form_label(form.addressStreet) }}
+                    {{ form_widget(form.addressStreet) }}
+                </div>
+                <div class="col-md-4">
+                    {{ form_label(form.addressNumber) }}
+                    {{ form_widget(form.addressNumber) }}
+                </div>
+                <div class="col-md-4">
+                    {{ form_label(form.zipCode) }}
+                    {{ form_widget(form.zipCode) }}
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr>
+{% endblock %}

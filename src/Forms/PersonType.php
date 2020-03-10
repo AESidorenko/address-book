@@ -3,10 +3,9 @@
 namespace App\Forms;
 
 use App\Entity\Person;
-use phpDocumentor\Reflection\Types\Collection;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -17,7 +16,11 @@ class PersonType extends AbstractType
         $formBuilder
             ->add('firstName')
             ->add('lastName')
-            ->add('birthday')
+            ->add('birthday', DateType::class, [
+                'widget' => 'choice',
+                'years'  => range(date('Y') - 100, date('Y')),
+            ]
+            )
             ->add('contacts', CollectionType::class,
                   [
                       'entry_type'    => ContactType::class,

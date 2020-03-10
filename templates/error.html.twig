@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <p>Sorry, an error occurred:</p>
+    <p>{{ message }}</p>
+    <br>
+    <p>
+        Now you may <a href="{{ path('persons.list') }}">return</a> to the site.
+    </p>
+{% endblock %}

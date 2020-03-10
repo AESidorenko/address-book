@@ -1,25 +1,29 @@
-<div class="card mb-2">
-    <div class="card-header">Addresses</div>
-    <div class="card-body">
-        <table class="table">
-            <thead>
-            <tr>
-                <th scope="col">Street, number</th>
-                <th scope="col">Zip code</th>
-                <th scope="col">City, state/province etc.</th>
-                <th scope="col">Country</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for address in person.addresses %}
+{% if person.addresses | length > 0 %}
+    <div class="card mb-2">
+        <div class="card-header">Addresses</div>
+        <div class="card-body">
+            <table class="table">
+                <thead>
                 <tr>
-                    <td>{{ [address.addressStreet, address.addressNumber] | join(', ') }}</td>
-                    <td>{{ address.zipCode }}</td>
-                    <td>{{ address.location is null ? '' : [address.location.city, address.location.extra] | join(', ') }}</td>
-                    <td>{{ address.location is null ? '' : address.location.country.title }}</td>
+                    <th scope="col">Street, number</th>
+                    <th scope="col">Zip code</th>
+                    <th scope="col">City, state/province etc.</th>
+                    <th scope="col">Country</th>
                 </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                {% for address in person.addresses %}
+                    <tr>
+                        <td>{{ [address.addressStreet, address.addressNumber] | join(', ') | trim(', ') }}</td>
+                        <td>{{ address.zipCode }}</td>
+                        <td>{{ address.location is null ? '' : [address.location.city, address.location.extra] | join(', ') | trim(', ') }}</td>
+                        <td>{{ address.location is null ? '' : address.location.country.title }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
+{% else %}
+    <p class="mt-4">There is no any address data yet.</p>
+{% endif %}

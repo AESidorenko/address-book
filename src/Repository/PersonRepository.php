@@ -15,23 +15,9 @@ class PersonRepository extends EntityRepository
 
     public function getFindAllQuery()
     {
-        return $this->createQueryBuilder('p')->getQuery();
-    }
-
-    public function getFindAllByNameCityAndCountry($name, $city, $country)
-    {
-        $query = $this->createQueryBuilder('p')
-            ->andWhere("LOWER(p.firstName) LIKE :n")
-            ->orWhere("LOWER(p.lastName) LIKE :n")
-            ->setParameter('n', '%' . strtolower($name) . '%')
-            ->setParameter('n', '%' . strtolower($name) . '%')
-
-//            ->andWhere("LOWER(p.address.location.country.title) LIKE :country")
-//            ->setParameter('country', '%' . strtolower($country) . '%')
-
-            ->getQuery()
-            ;
-
-        return $query;
+        return $this->createQueryBuilder('p')
+                    ->orderBy('LOWER(p.firstName)')
+                    ->addOrderBy('LOWER(p.lastName)')
+                    ->getQuery();
     }
 }

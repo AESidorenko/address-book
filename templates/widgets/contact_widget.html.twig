@@ -1,0 +1,13 @@
+{% block contact_widget %}
+    <div class="form-row">
+        <div class="col-md-3">
+            {{ form_widget(form.headline) }}
+        </div>
+        <div class="col-md-3">
+            {{ form_widget(form.phone) }}
+        </div>
+        <div class="col-md-3">
+            {{ form_widget(form.email) }}
+        </div>
+    </div>
+{% endblock %}

@@ -1,77 +1,81 @@
 {% extends 'base.html.twig' %}
+
 {% block body %}
     <div class="row m-2">
         <div class="col-md-9">
-            <a class="btn btn-sm btn-secondary" data-toggle="collapse" href="#collapseExample" role="button"
+            <a class="btn btn-sm btn-secondary mb-3" data-toggle="collapse" href="#collapseExample" role="button"
                aria-expanded="false" aria-controls="collapseExample">
-                Search filters
+                Show/hide search filter
             </a>
             <div class="collapse" id="collapseExample">
-                {{ form_start(searchFilters) }}
                 <div class="card card-body">
-                    <div class="form-row">
-                        <div class="col-md-4">Name: {{ form_widget(searchFilters.name) }}</div>
-                        <div class="col-md-4">City: {{ form_widget(searchFilters.city) }}</div>
-                        <div class="col-md-4">Country: {{ form_widget(searchFilters.country) }}</div>
-                    </div>
 
-                    <div class="form-row">
-                        <div class="col-md-12 mt-3">
-                            <button type="submit" class="btn btn-primary btn-sm">Apply filters</button>
-                        </div>
-                    </div>
+                    <form class="form-inline" method="get" action="/persons?page=1"
+                          enctype="application/x-www-form-urlencoded">
 
+                        <select id="filterField" name="filterField" class="form-control form-inline mr-2">
+                            <option value="p.firstName">First name</option>
+                            <option value="p.lastName">Last name</option>
+                        </select>
+
+                        <input class="form-control mr-2" type="text" value="" name="filterValue">
+
+                        <button type="submit" class="btn btn-sm btn-primary">Filter</button>
+
+                    </form>
+
+                    <br>
                 </div>
-                {{ form_end(searchFilters) }}
             </div>
         </div>
         <div class="col-md-3">
-            <a href="{{ path('person.new') }}" type="button" class="btn btn-sm btn-success float-right">+ Add new
+            <a href="{{ path('person.new') }}" type="button" class="btn btn-sm btn-success float-right">Add new
                 person</a>
         </div>
     </div>
 
-    {#    todo: remove block#}
-    {#    <div class="row m-2">#}
-    {#        <div class="col-md-5">#}
-    {#            {{ knp_pagination_filter(pagination, {#}
-    {#                'p.firstName': 'First name',#}
-    {#                'p.lastName': 'Last name',#}
-    {#            }) }}#}
-    {#        </div>#}
-    {#    </div>#}
-
     <div class="row">
         <div class="col">
-            <table class="table table-striped">
-                <thead>
-                <tr>
-                    <th scope="col">{{ knp_pagination_sortable(pagination, 'Id', 'p.id') }}</th>
-                    <th scope="col">{{ knp_pagination_sortable(pagination, 'First name', 'p.firstName') }}</th>
-                    <th scope="col">{{ knp_pagination_sortable(pagination, 'Last name', 'p.lastName') }}</th>
-                    <th scope="col">Actions</th>
-                </tr>
-                </thead>
-                {% for person in pagination %}
-                    <tr {% if loop.index is odd %}class="color"{% endif %}>
-                        <td>{{ person.id }}</td>
-                        <td><a href="{{ path('person.show', {'id': person.id}) }}">{{ person.firstName }}</a></td>
-                        <td><a href="{{ path('person.show', {'id': person.id}) }}">{{ person.lastName }}</a></td>
-                        <td>
-                            <a href="{{ path('person.edit', {'id': person.id}) }}">edit</a>&nbsp;|&nbsp;<a
-                                    href="{{ path('person.delete', {'id': person.id}) }}" data-toggle="modal"
-                                    data-target="#modal-dialog">delete</a>
-                        </td>
+            {% if pagination | length > 0 %}
+
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th scope="col">Id</th>
+                        <th scope="col">First name</th>
+                        <th scope="col">Last name</th>
+                        <th scope="col"></th>
                     </tr>
-                {% endfor %}
-            </table>
-            <div class="navigation">
-                {{ knp_pagination_render(pagination, null, {}, {
-                    'position': 'left',
-                    'size': 'normal',
-                    'rounded': true,
-                }) }}
-            </div>
+                    </thead>
+                    {% for person in pagination %}
+                        <tr {% if loop.index is odd %}class="color"{% endif %}>
+                            <td>{{ person.id }}</td>
+                            <td><a href="{{ path('person.show', {'id': person.id}) }}">{{ person.firstName }}</a></td>
+                            <td><a href="{{ path('person.show', {'id': person.id}) }}">{{ person.lastName }}</a></td>
+                            <td><a href="{{ path('person.edit', {'id': person.id}) }}">edit</a></td>
+                        </tr>
+                    {% endfor %}
+                </table>
+                <div class="navigation">
+                    {{ knp_pagination_render(pagination, null, {}, {
+                        'position': 'left',
+                        'size': 'normal',
+                        'rounded': true,
+                    }) }}
+                </div>
+            {% else %}
+                <p>No items found.</p>
+            {% endif %}
         </div>
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script>
+        $(document).ready(function () {
+            $('select[name=filterField]').addClass('form-control');
+        })
+    </script>
 {% endblock %}

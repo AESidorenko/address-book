@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\Country;
 use App\Entity\Person;
-use App\Forms\PersonSearchFiltersType;
 use App\Forms\PersonType;
 use App\Repository\CountryRepository;
 use App\Repository\PersonRepository;
@@ -30,40 +29,35 @@ class AddressBookController extends Controller
     }
 
     /**
-     * @Route("/persons", name="persons.list")
-     * @param Request          $request
-     * @param PersonRepository $personRepository
+     * @Route("/", name="index")
+     */
+    public function index()
+    {
+        return $this->redirectToRoute('persons.list');
+    }
+
+    /**
+     * @Route("/persons/", name="persons.list")
+     * @param Request            $request
+     * @param PersonRepository   $personRepository
+     * @param PaginatorInterface $paginator
      * @return Response
      */
     public function listPersons(Request $request, PersonRepository $personRepository, PaginatorInterface $paginator)
     {
-        $searchFiltersForm = $this->createForm(PersonSearchFiltersType::class);
-        $searchFiltersForm->handleRequest($request);
-        if ($searchFiltersForm->isSubmitted() && $searchFiltersForm->isValid()) {
-            $formData = $searchFiltersForm->getData();
-            $query    = $personRepository->getFindAllByNameCityAndCountry(
-                $formData['name'],
-                $formData['city'],
-                $formData['country']
-            );
-        } else {
-            $query = $personRepository->getFindAllQuery();
-        }
+        $query = $personRepository->getFindAllQuery();
 
         $pagination = $paginator->paginate(
             $query,
             $request->query->getInt('page', 1),
-            3
+            15
         );
-
-        $result = $query->getResult();
 
         return $this->render(
             'persons.html.twig',
             [
-                'searchFilters' => $searchFiltersForm->createView(),
-                'pagination'    => $pagination,
-                'breadcrumbs'   => [
+                'pagination'  => $pagination,
+                'breadcrumbs' => [
                     'Persons' => ''
                 ]
             ]
@@ -71,7 +65,7 @@ class AddressBookController extends Controller
     }
 
     /**
-     * @Route("/persons/{id}/show", name="person.show")
+     * @Route("/persons/{id}/show/", name="person.show")
      * @ParamConverter("person", class="App\Entity\Person")
      * @param Person $person
      * @return Response
@@ -91,7 +85,7 @@ class AddressBookController extends Controller
     }
 
     /**
-     * @Route("/persons/{id}/edit", name="person.edit")
+     * @Route("/persons/{id}/edit/", name="person.edit")
      * @ParamConverter("person", class="App\Entity\Person")
      * @param Request                $request
      * @param Person                 $person
@@ -156,7 +150,7 @@ class AddressBookController extends Controller
     }
 
     /**
-     * @Route("/persons/new", name="person.new")
+     * @Route("/persons/new/", name="person.new")
      * @param Request $request
      * @return Response
      */
@@ -190,19 +184,17 @@ class AddressBookController extends Controller
     }
 
     /**
-     * @Route("/persons/{id}/delete", name="person.delete")
+     * @Route("/persons/{id}/delete/", name="person.delete")
      * @ParamConverter("person", class="App\Entity\Person")
      * @param Person $person
      * @return Response
      */
     public
-    function deleteOne(Person $person)
+    function deleteOne(Person $person, EntityManagerInterface $entityManager)
     {
-        return $this->render(
-            'person.show.html.twig',
-            [
-                'person' => $person,
-            ]
-        );
+        $entityManager->remove($person);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('persons.list');
     }
 }

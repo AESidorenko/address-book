@@ -1,23 +1,27 @@
-<div class="card mb-2">
-    <div class="card-header">Contacts</div>
-    <div class="card-body">
-        <table class="table">
-            <thead>
-            <tr>
-                <th scope="col">Title</th>
-                <th scope="col">Phone</th>
-                <th scope="col">Email</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for contact in person.contacts %}
+{% if person.contacts | length > 0 %}
+    <div class="card mb-2">
+        <div class="card-header">Contacts</div>
+        <div class="card-body">
+            <table class="table">
+                <thead>
                 <tr>
-                    <td>{{ contact.headline }}</td>
-                    <td>{{ contact.phone }}</td>
-                    <td>{{ contact.email }}</td>
+                    <th scope="col">Title</th>
+                    <th scope="col">Phone</th>
+                    <th scope="col">Email</th>
                 </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                {% for contact in person.contacts %}
+                    <tr>
+                        <td>{{ contact.headline }}</td>
+                        <td>{{ contact.phone }}</td>
+                        <td>{{ contact.email }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
+{% else %}
+    <p>There is no any contacts information yet.</p>
+{% endif %}

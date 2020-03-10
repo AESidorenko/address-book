@@ -13,8 +13,6 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Person
 {
-    // todo: add keys, constraints and complex keys
-
     /**
      * @ORM\Column(type="integer")
      * @ORM\Id

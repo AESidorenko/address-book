@@ -6,8 +6,10 @@ use App\Entity\Person;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\File;
 
 class PersonType extends AbstractType
 {
@@ -17,9 +19,9 @@ class PersonType extends AbstractType
             ->add('firstName')
             ->add('lastName')
             ->add('birthday', DateType::class, [
-                'widget' => 'choice',
-                'years'  => range(date('Y') - 100, date('Y')),
-            ]
+                                'widget' => 'choice',
+                                'years'  => range(date('Y') - 100, date('Y')),
+                            ]
             )
             ->add('contacts', CollectionType::class,
                   [
@@ -35,6 +37,22 @@ class PersonType extends AbstractType
                       'entry_options' => ['label' => false],
                       'allow_add'     => true,
                       'by_reference'  => false,
+                  ]
+            )
+            ->add('image', FileType::class,
+                  [
+                      'label'       => 'Personal image (JPEG file, size <5M)',
+                      'mapped'      => false,
+                      'required'    => false,
+                      'constraints' => [
+                          new File(
+                              [
+                                  'maxSize'          => '5M',
+                                  'mimeTypes'        => ['image/jpeg'],
+                                  'mimeTypesMessage' => 'Please upload a valid JPEG document',
+                              ]
+                          )
+                      ],
                   ]
             );
     }

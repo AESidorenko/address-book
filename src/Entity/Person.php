@@ -56,12 +56,18 @@ class Person
     private $birthday;
 
     /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $image;
+
+    /**
      * Person constructor.
      */
     public function __construct()
     {
         $this->firstName = '';
         $this->lastName  = '';
+        $this->image     = '';
         $this->birthday  = new DateTime();
         $this->contacts  = new ArrayCollection();
         $this->addresses = new ArrayCollection();
@@ -221,6 +227,18 @@ class Person
     public function removeAddress(Address $address)
     {
         $this->addresses->removeElement($address);
+
+        return $this;
+    }
+
+    public function getImage(): string
+    {
+        return $this->image;
+    }
+
+    public function setImage(string $image)
+    {
+        $this->image = $image;
 
         return $this;
     }

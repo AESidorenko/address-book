@@ -11,10 +11,13 @@ use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
+use Transliterator;
 
 class AddressBookController extends Controller
 {
@@ -22,10 +25,20 @@ class AddressBookController extends Controller
      * @var RouterInterface
      */
     private $router;
+    /**
+     * @var string
+     */
+    private $uploadsDirectory;
+    /**
+     * @var string
+     */
+    private $uploadsPath;
 
-    public function __construct(RouterInterface $router)
+    public function __construct(RouterInterface $router, string $uploadsDirectory, string $uploadsPath)
     {
-        $this->router = $router;
+        $this->router           = $router;
+        $this->uploadsDirectory = $uploadsDirectory;
+        $this->uploadsPath      = $uploadsPath;
     }
 
     /**
@@ -57,6 +70,7 @@ class AddressBookController extends Controller
             'persons.html.twig',
             [
                 'pagination'  => $pagination,
+                'uploadsPath' => $this->uploadsPath,
                 'breadcrumbs' => [
                     'Persons' => ''
                 ]
@@ -76,6 +90,7 @@ class AddressBookController extends Controller
             'person.show.html.twig',
             [
                 'person'      => $person,
+                'uploadsPath' => $this->uploadsPath,
                 'breadcrumbs' => [
                     'Persons' => $this->router->generate('persons.list'),
                     'Details' => '',
@@ -117,6 +132,25 @@ class AddressBookController extends Controller
             /** @var Person $person */
             $person = $form->getData();
 
+            $imageFile = $form->get('image')->getData();
+            if ($imageFile) {
+                $transliterator = Transliterator::create('Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()');
+
+                $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename     = $transliterator->transliterate($originalFilename);
+                $newFilename      = $safeFilename . '-' . uniqid() . '.' . $imageFile->guessExtension();
+                try {
+                    $imageFile->move(
+                        $this->uploadsDirectory,
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    $form->addError(new FormError('File uploading error'));
+                }
+
+                $person->setImage($newFilename);
+            }
+
             foreach ($person->getAddresses() as $address) {
                 $country = $address->getLocation()->getCountry();
                 if (array_key_exists($address->getId(), $originalCountries) &&
@@ -140,6 +174,7 @@ class AddressBookController extends Controller
             'person.edit.html.twig',
             [
                 'form'        => $form->createView(),
+                'uploadsPath' => $this->uploadsPath,
                 'person'      => $person,
                 'breadcrumbs' => [
                     'Persons'      => $this->router->generate('persons.list'),
@@ -151,10 +186,11 @@ class AddressBookController extends Controller
 
     /**
      * @Route("/persons/new/", name="person.new")
-     * @param Request $request
+     * @param Request                $request
+     * @param EntityManagerInterface $entityManager
      * @return Response
      */
-    public function newOne(Request $request)
+    public function newOne(Request $request, EntityManagerInterface $entityManager, $uploadsDirectory)
     {
         $person = new Person();
 
@@ -163,17 +199,39 @@ class AddressBookController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            /** @var Person $person */
             $person = $form->getData();
 
-            $entityManager = $this->getDoctrine()->getManager();
+            $imageFile = $form->get('image')->getData();
+            if ($imageFile) {
+                $transliterator = Transliterator::create('Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()');
+
+                $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename     = $transliterator->transliterate($originalFilename);
+                $newFilename      = $safeFilename . '-' . uniqid() . '.' . $imageFile->guessExtension();
+                try {
+                    $imageFile->move(
+                        $this->uploadsDirectory,
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    $form->addError(new FormError('File uploading error'));
+                }
+
+                $person->setImage($newFilename);
+            }
+
             $entityManager->persist($person);
             $entityManager->flush();
+
+            return $this->redirectToRoute('person.edit', ['id' => $person->getId()]);
         }
 
         return $this->render(
             'person.edit.html.twig',
             [
                 'form'        => $form->createView(),
+                'uploadsPath' => $this->uploadsPath,
                 'person'      => $person,
                 'breadcrumbs' => [
                     'Persons' => $this->router->generate('persons.list'),

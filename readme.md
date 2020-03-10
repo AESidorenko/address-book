@@ -2,7 +2,7 @@
 ### Demo application, author Anton E. Sidorenko, 10.03.2020
 
 ## Requirements
-1. PHP version: 7.0
+1. PHP version: 7.0, php7.0-intl extension required
 
 2. SQLite version: 3.0+
 

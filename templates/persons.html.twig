@@ -41,7 +41,7 @@
                 <table class="table table-striped">
                     <thead>
                     <tr>
-                        <th scope="col">Id</th>
+                        <th scope="col"></th>
                         <th scope="col">First name</th>
                         <th scope="col">Last name</th>
                         <th scope="col"></th>
@@ -49,7 +49,14 @@
                     </thead>
                     {% for person in pagination %}
                         <tr {% if loop.index is odd %}class="color"{% endif %}>
-                            <td>{{ person.id }}</td>
+                            <td>
+                                {% if person.image is not empty %}
+                                    <img src="{{ asset(uploadsPath ~ '/' ~ person.image) }}" height="60"
+                                         class="img rounded">
+                                {% else %}
+                                    <img src="https://via.placeholder.com/60" height="60" class="img rounded">
+                                {% endif %}
+                            </td>
                             <td><a href="{{ path('person.show', {'id': person.id}) }}">{{ person.firstName }}</a></td>
                             <td><a href="{{ path('person.show', {'id': person.id}) }}">{{ person.lastName }}</a></td>
                             <td><a href="{{ path('person.edit', {'id': person.id}) }}">edit</a></td>

@@ -1,6 +1,5 @@
 # Address book
-## Demo application
-### by Anton E. Sidorenko, 10.03.2020
+### Demo application, author Anton E. Sidorenko, 10.03.2020
 
 ## Requirements
 1. PHP version: 7.0

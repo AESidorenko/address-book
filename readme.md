@@ -6,7 +6,10 @@
 
 2. SQLite version: 3.0+
 
-* _Project uses Symfony 3.4 framework - it will be installed by composer_  
+3. composer
+
+* _Project uses Symfony 3.4 framework - it will be installed by composer_
+* _Recommended php.ini value for upload_max_filesize > 5M_   
 
 ## Installation & run
 
